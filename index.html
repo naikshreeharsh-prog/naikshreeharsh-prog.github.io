@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shreeharsh Naik // Portfolio</title>
+<meta name="description" content="Portfolio of Shreeharsh Naik — Computer Engineering student passionate about AI/ML, cloud computing, and technology." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — CYBERPUNK / ELECTRIC BLUE ON DARK NAVY
+     ============================================================ */
+  :root {
+    --accent-color: #3B82F6;        /* Electric Blue */
+    --accent-glow: rgba(59, 130, 246, 0.55);
+    --accent-soft: rgba(59, 130, 246, 0.12);
+    --bg-color: #0B1120;            /* Dark Navy */
+    --bg-panel: rgba(15, 23, 42, 0.72);
+    --text-primary: #E2E8F0;
+    --text-dim: #64748B;
+    --neon-pink: #F472B6;           /* secondary cyberpunk accent */
+    --border-neon: 1px solid rgba(59, 130, 246, 0.35);
+    --font-display: 'Orbitron', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  /* ============================================================
+     TEXT SELECTION — ACCENT COLOR
+     ============================================================ */
+  ::selection {
+    background: var(--accent-color);
+    color: #FFFFFF;
+    text-shadow: 0 0 8px var(--accent-glow);
+  }
+  ::-moz-selection {
+    background: var(--accent-color);
+    color: #FFFFFF;
+  }
+
+  /* ============================================================
+     RESET / BASE
+     ============================================================ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    overflow-x: hidden;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HIDE DEFAULT CURSOR — custom cursor takes over */
+  body, a, button, .project-card, .repo-card, input, textarea {
+    cursor: none !important;
+  }
+
+  /* ============================================================
+     CYBERPUNK BACKDROP — grid + scanlines + glow orbs
+     ============================================================ */
+  .backdrop {
+    position: fixed; inset: 0; z-index: -2; overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59,130,246,0.14), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(244,114,182,0.08), transparent 60%),
+      var(--bg-color);
+  }
+  .backdrop::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+  }
+  .backdrop::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 3px,
+      rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px
+    );
+  }
+
+  /* ============================================================
+     CUSTOM CURSOR — fixed, non-blocking, always on top
+     ============================================================ */
+  #cursor-dot, #cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 99999;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+  #cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent-color);
+    opacity: 0.6;
+    transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease,
+                border-color 0.25s ease, background 0.25s ease;
+  }
+  #cursor-ring.hovering {
+    width: 64px; height: 64px;
+    opacity: 1;
+    border-color: var(--neon-pink);
+    background: rgba(244, 114, 182, 0.08);
+    box-shadow: 0 0 18px rgba(244, 114, 182, 0.35);
+  }
+  @media (hover: none) {
+    #cursor-dot, #cursor-ring { display: none; }
+    body, a, button { cursor: auto !important; }
+  }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(11, 17, 32, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: var(--border-neon);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+    color: var(--accent-color); letter-spacing: 2px;
+    text-decoration: none;
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+  .logo span { color: var(--text-primary); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 0.85rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+  }
+  .nav-links a:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+  @media (max-width: 640px) { .nav-links { gap: 16px; } .nav-links a { font-size: 0.72rem; } }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  header.hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 70px;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center;
+  }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; text-align: center; } }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--neon-pink);
+    border: 1px solid rgba(244,114,182,0.4);
+    padding: 6px 14px; margin-bottom: 20px;
+    background: rgba(244,114,182,0.06);
+  }
+
+  .hero h1 {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(2.2rem, 6vw, 4.2rem); line-height: 1.1;
+    letter-spacing: 1px;
+  }
+  /* GLITCH EFFECT */
+  .glitch { position: relative; display: inline-block; color: var(--text-primary); }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; inset: 0; overflow: hidden;
+  }
+  .glitch::before {
+    color: var(--accent-color);
+    animation: glitch-a 3.2s infinite steps(2, end);
+    clip-path: inset(0 0 55% 0);
+  }
+  .glitch::after {
+    color: var(--neon-pink);
+    animation: glitch-b 2.7s infinite steps(2, end);
+    clip-path: inset(60% 0 0 0);
+  }
+  @keyframes glitch-a {
+    0%, 86%, 100% { transform: translate(0, 0); opacity: 0.85; }
+    88% { transform: translate(-4px, -2px); }
+    92% { transform: translate(3px, 1px); }
+    96% { transform: translate(-2px, 2px); }
+  }
+  @keyframes glitch-b {
+    0%, 80%, 100% { transform: translate(0, 0); opacity: 0.85; }
+    84% { transform: translate(4px, 2px); }
+    90% { transform: translate(-3px, -1px); }
+  }
+
+  .hero h2 {
+    font-family: var(--font-mono); font-weight: 400;
+    font-size: clamp(1rem, 2.4vw, 1.4rem);
+    color: var(--accent-color); margin-top: 14px;
+    text-shadow: 0 0 14px var(--accent-glow);
+  }
+  .hero h2 .type-cursor {
+    display: inline-block; width: 10px; height: 1.2em;
+    background: var(--accent-color); vertical-align: text-bottom;
+    margin-left: 4px;
+    animation: blink 1s steps(1) infinite;
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-bio {
+    margin-top: 26px; max-width: 520px; color: var(--text-dim);
+    font-size: 1rem; line-height: 1.8;
+  }
+  @media (max-width: 860px) { .hero-bio { margin-left: auto; margin-right: auto; } }
+
+  .hero-cta { margin-top: 36px; display: flex; gap: 16px; flex-wrap: wrap; }
+  @media (max-width: 860px) { .hero-cta { justify-content: center; } }
+
+  .btn {
+    font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 2px;
+    text-transform: uppercase; text-decoration: none;
+    padding: 14px 28px;
+    position: relative;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: var(--accent-color); color: #fff;
+    box-shadow: 0 0 18px var(--accent-glow);
+  }
+  .btn-primary:hover { box-shadow: 0 0 34px var(--accent-glow); transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--accent-color); border: 1px solid rgba(59,130,246,0.5);
+    background: rgba(59,130,246,0.06);
+  }
+  .btn-ghost:hover {
+    background: var(--accent-soft); box-shadow: 0 0 22px rgba(59,130,246,0.25);
+    transform: translateY(-2px);
+  }
+
+  /* Hero profile card */
+  .profile-card {
+    background: var(--bg-panel);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: var(--border-neon);
+    padding: 34px 30px;
+    position: relative;
+    clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
+    box-shadow: 0 0 40px rgba(59,130,246,0.10), inset 0 0 60px rgba(59,130,246,0.03);
+    max-width: 380px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .profile-card .corner {
+    position: absolute; width: 14px; height: 14px;
+    border: 2px solid var(--accent-color);
+  }
+  .profile-card .corner.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .profile-card .corner.br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  .avatar-frame { position: relative; width: 132px; height: 132px; margin: 0 auto 20px; }
+  .avatar-frame img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 24px var(--accent-glow);
+    display: block; background: #1E293B;
+  }
+  .avatar-frame::after {
+    content: '';
+    position: absolute; inset: -8px;
+    border: 1px dashed rgba(59,130,246,0.5);
+    border-radius: 50%;
+    animation: spin 14s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .gh-handle { color: var(--accent-color); letter-spacing: 1px; text-align: center; display: block; }
+  .gh-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin-top: 22px; gap: 10px; text-align: center;
+  }
+  .gh-stat {
+    border: 1px solid rgba(59,130,246,0.22);
+    background: rgba(59,130,246,0.05);
+    padding: 12px 6px;
+  }
+  .gh-stat b { display: block; font-family: var(--font-display); font-size: 1.15rem; color: var(--text-primary); }
+  .gh-stat span { font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; }
+
+  .status-line {
+    margin-top: 22px; font-size: 0.75rem; color: var(--text-dim);
+    text-align: center; letter-spacing: 1px;
+  }
+  .status-line .pulse {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #22C55E; margin-right: 8px;
+    box-shadow: 0 0 8px rgba(34,197,94,0.8);
+    animation: pulse-dot 1.6s ease infinite;
+  }
+  @keyframes pulse-dot { 50% { opacity: 0.35; } }
+
+  /* ============================================================
+     SECTIONS
+     ============================================================ */
+  section { padding: 100px 0; }
+  .section-head { margin-bottom: 48px; }
+  .section-head .kicker {
+    color: var(--neon-pink); font-size: 0.75rem;
+    letter-spacing: 4px; text-transform: uppercase;
+  }
+  .section-head h3 {
+    font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700; margin-top: 8px;
+  }
+  .section-head h3 em {
+    font-style: normal; color: var(--accent-color);
+    text-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  /* ============================================================
+     REPOS / PROJECT GRID
+     ============================================================ */
+  .repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 26px;
+    perspective: 1200px;
+  }
+  .repo-card {
+    background: var(--bg-panel);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: var(--border-neon);
+    padding: 26px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .repo-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 30px rgba(59,130,246,0.28);
+  }
+  .repo-card .card-top {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  }
+  .repo-lang {
+    font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent-color);
+    border: 1px solid rgba(59,130,246,0.4);
+    padding: 3px 10px; background: var(--accent-soft);
+    white-space: nowrap;
+  }
+  .repo-stars {
+    font-size: 0.8rem; color: var(--neon-pink); white-space: nowrap;
+    text-shadow: 0 0 10px rgba(244,114,182,0.5);
+  }
+  .repo-name {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+    color: var(--text-primary); word-break: break-word;
+    transition: color 0.25s ease;
+  }
+  .repo-card:hover .repo-name { color: var(--accent-color); }
+  .repo-desc {
+    color: var(--text-dim); font-size: 0.88rem; line-height: 1.7; flex: 1;
+  }
+  .repo-topics { display: flex; flex-wrap: wrap; gap: 6px; }
+  .repo-topics span {
+    font-size: 0.68rem; color: var(--text-dim);
+    background: rgba(100,116,139,0.12);
+    padding: 2px 8px; letter-spacing: 1px;
+  }
+  .repo-link {
+    margin-top: 4px; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent-color); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    align-self: flex-start;
+    transition: gap 0.25s ease, text-shadow 0.25s ease;
+  }
+  .repo-link:hover { gap: 14px; text-shadow: 0 0 12px var(--accent-glow); }
+
+  .repo-fallback, .repo-loading {
+    color: var(--text-dim); border: 1px dashed rgba(59,130,246,0.3);
+    padding: 28px; text-align: center; letter-spacing: 1px;
+    grid-column: 1 / -1;
+  }
+  .repo-loading .blink-text { animation: blink 1.2s steps(1) infinite; }
+
+  /* ============================================================
+     ABOUT / STACK
+     ============================================================ */
+  .about-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--border-neon);
+    padding: 40px;
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  }
+  .about-panel p { color: var(--text-dim); line-height: 1.9; max-width: 760px; }
+  .about-panel p strong { color: var(--accent-color); font-weight: 400; }
+  .stack-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .stack-chip {
+    font-size: 0.78rem; letter-spacing: 1.5px;
+    border: 1px solid rgba(59,130,246,0.35);
+    background: var(--accent-soft); color: var(--accent-color);
+    padding: 8px 16px;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .stack-chip:hover {
+    box-shadow: 0 0 16px var(--accent-glow);
+    transform: translateY(-2px);
+  }
+
+  /* ============================================================
+     FOOTER / CONNECT
+     ============================================================ */
+  footer {
+    border-top: var(--border-neon);
+    padding: 60px 0 40px;
+    background: rgba(11,17,32,0.6);
+  }
+  .social-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .social-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    color: var(--text-dim); text-decoration: none;
+    border: 1px solid rgba(100,116,139,0.35);
+    padding: 14px 26px; font-size: 0.85rem; letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(15,23,42,0.5);
+    transition: all 0.3s ease;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .social-btn i { color: var(--accent-color); font-size: 1.1rem; transition: text-shadow 0.3s; }
+  .social-btn:hover {
+    border-color: var(--accent-color); color: var(--text-primary);
+    box-shadow: 0 0 24px rgba(59,130,246,0.22);
+    transform: translateY(-2px);
+  }
+  .social-btn:hover i { text-shadow: 0 0 14px var(--accent-glow); }
+  .footer-line {
+    text-align: center; margin-top: 44px; font-size: 0.75rem;
+    color: var(--text-dim); letter-spacing: 2px;
+  }
+  .footer-line .accent { color: var(--accent-color); }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    color: var(--text-dim); font-size: 0.7rem; letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!-- Cyberpunk backdrop -->
+<div class="backdrop" aria-hidden="true"></div>
+
+<!-- ============ CUSTOM CURSOR (fixed, non-blocking, topmost) ============ -->
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#top">SN<span>//</span>DEV</a>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+      <a href="#connect">Connect</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="hero-tag" id="hero-tag">< Systems Online /></span>
+      <h1>
+        <span class="glitch" data-text="SHREEHARSH">SHREEHARSH</span><br />
+        <span class="glitch" data-text="NAIK">NAIK</span>
+      </h1>
+      <h2 id="hero-sub">> Computer Engineering Student<span class="type-cursor"></span></h2>
+      <p class="hero-bio" id="hero-bio">
+        Computer Engineering student passionate about AI/ML, cloud computing, and technology.
+        I enjoy building practical projects and continuously learning new skills.
+      </p>
+      <div class="hero-cta" id="hero-cta">
+        <a class="btn btn-primary" href="#projects">View Projects</a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/shreeharsh-naik-b5778443b" target="_blank" rel="noopener noreferrer">
+          <i class="fa-brands fa-linkedin-in"></i>&nbsp; LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <!-- GitHub profile card — populated via API -->
+    <div class="profile-card" id="profile-card">
+      <span class="corner tl"></span><span class="corner br"></span>
+      <div class="avatar-frame">
+        <img id="gh-avatar" src="" alt="GitHub avatar of Shreeharsh Naik" />
+      </div>
+      <span class="gh-handle" id="gh-handle">@naikshreeharsh-prog</span>
+      <div class="gh-stats">
+        <div class="gh-stat"><b id="gh-repos">--</b><span>Repos</span></div>
+        <div class="gh-stat"><b id="gh-followers">--</b><span>Followers</span></div>
+        <div class="gh-stat"><b id="gh-following">--</b><span>Following</span></div>
+      </div>
+      <div class="status-line"><span class="pulse"></span>Open to collaborations & internships</div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll //</div>
+</header>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// 001</span>
+      <h3>Featured <em>Repositories</em></h3>
+    </div>
+    <div class="repo-grid" id="repo-grid">
+      <div class="repo-loading"><span class="blink-text">> Establishing uplink to GitHub API...</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// 002</span>
+      <h3>About <em>The Operator</em></h3>
+    </div>
+    <div class="about-panel">
+      <p>
+        I'm <strong>Shreeharsh Naik</strong>, a Computer Engineering student passionate about
+        <strong>AI/ML</strong>, <strong>cloud computing</strong>, and technology at large.
+        I enjoy building practical projects and continuously learning new skills — from training
+        intelligent models to deploying resilient cloud infrastructure. My GitHub feed is my
+        lab notebook: experiments, builds, and iterations shipped in public.
+      </p>
+      <div class="stack-row">
+        <span class="stack-chip">Python</span>
+        <span class="stack-chip">Machine Learning</span>
+        <span class="stack-chip">Cloud Computing</span>
+        <span class="stack-chip">Data Structures</span>
+        <span class="stack-chip">C / C++</span>
+        <span class="stack-chip">Linux</span>
+        <span class="stack-chip">Git & GitHub</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER / CONNECT ============ -->
+<footer id="connect">
+  <div class="wrap">
+    <div class="section-head" style="text-align:center;">
+      <span class="kicker">// 003</span>
+      <h3>Jack <em>In</em></h3>
+    </div>
+    <div class="social-links">
+      <a class="social-btn" href="https://github.com/naikshreeharsh-prog" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-github"></i> GitHub
+      </a>
+      <a class="social-btn" href="https://www.linkedin.com/in/shreeharsh-naik-b5778443b" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-linkedin-in"></i> LinkedIn
+      </a>
+      <a class="social-btn" href="https://github.com/naikshreeharsh-prog?tab=repositories" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-code"></i> All Repos
+      </a>
+    </div>
+    <p class="footer-line">Designed in the grid &nbsp;<span class="accent">//</span>&nbsp; © 2026 Shreeharsh Naik</p>
+  </div>
+</footer>
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+/* ================================================================
+   CONFIG — hardcoded identity
+   ================================================================ */
+const GITHUB_USERNAME = 'naikshreeharsh-prog';
+
+/* ================================================================
+   1. CUSTOM CURSOR — dot follows instantly, ring trails smoothly.
+      Morphs/expands over any clickable element.
+   ================================================================ */
+(function initCursor() {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  let mouseX = -100, mouseY = -100;   // raw pointer position
+  let ringX = -100, ringY = -100;     // eased ring position
+  const EASE = 0.16;                  // trail factor
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+  });
+
+  // Smooth trailing loop for the ring
+  (function ringLoop() {
+    ringX += (mouseX - ringX) * EASE;
+    ringY += (mouseY - ringY) * EASE;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+    requestAnimationFrame(ringLoop);
+  })();
+
+  // Morph/expand on hover over interactive elements
+  const hoverSelector = 'a, button, .repo-card, .stack-chip, .btn, .social-btn, img';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(hoverSelector)) ring.classList.add('hovering');
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(hoverSelector)) ring.classList.remove('hovering');
+  });
+
+  // Hide custom cursor when pointer leaves the window
+  document.addEventListener('mouseleave', () => { dot.style.opacity = 0; ring.style.opacity = 0; });
+  document.addEventListener('mouseenter', () => { dot.style.opacity = 1; ring.style.opacity = 0.6; });
+})();
+
+/* ================================================================
+   2. 3D HOVER TILT — vanilla JS mousemove on project cards
+   ================================================================ */
+function attachTilt(card) {
+  const MAX_TILT = 8; // degrees
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;   // 0..1
+    const py = (e.clientY - rect.top) / rect.height;   // 0..1
+    const rotateY = (px - 0.5) * 2 * MAX_TILT;
+    const rotateX = (0.5 - py) * 2 * MAX_TILT;
+    card.style.transform =
+      `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(12px) scale(1.02)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform 0.45s cubic-bezier(0.23, 1, 0.32, 1)';
+    card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0) scale(1)';
+    setTimeout(() => { card.style.transition = ''; }, 450);
+  });
+}
+
+/* ================================================================
+   3. GITHUB API — fetch user + repos, render top repos by stars
+   ================================================================ */
+async function loadGitHubData() {
+  const grid = document.getElementById('repo-grid');
+  const API = `https://api.github.com/users/${GITHUB_USERNAME}`;
+
+  try {
+    const [userRes, reposRes] = await Promise.all([
+      fetch(`${API}`),
+      fetch(`${API}/repos?per_page=100&sort=updated`)
+    ]);
+    if (!userRes.ok || !reposRes.ok) throw new Error('GitHub API request failed');
+
+    const user = await userRes.json();
+    const repos = await reposRes.json();
+
+    // ---- Profile card ----
+    document.getElementById('gh-avatar').src = user.avatar_url || '';
+    document.getElementById('gh-handle').textContent = '@' + user.login;
+    document.getElementById('gh-repos').textContent = user.public_repos ?? '0';
+    document.getElementById('gh-followers').textContent = user.followers ?? '0';
+    document.getElementById('gh-following').textContent = user.following ?? '0';
+
+    // ---- Top repos by stars (skip forks & empty repos first if possible) ----
+    const topRepos = repos
+      .filter(r => !r.fork)
+      .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at))
+      .slice(0, 6);
+
+    // Fallback: if all repos are forks, just use most recently pushed ones
+    const list = topRepos.length ? topRepos : repos.slice(0, 6);
+
+    grid.innerHTML = '';
+
+    list.forEach((repo) => {
+      const card = document.createElement('a');
+      card.className = 'repo-card';
+      card.href = repo.html_url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="repo-lang">${escapeHTML(repo.language || 'Code')}</span>
+          <span class="repo-stars"><i class="fa-solid fa-star"></i> ${repo.stargazers_count} &nbsp;<i class="fa-solid fa-code-fork"></i> ${repo.forks_count}</span>
+        </div>
+        <span class="repo-name">${escapeHTML(repo.name)}</span>
+        <span class="repo-desc">${escapeHTML(repo.description || 'No description transmitted for this repository.')}</span>
+        <div class="repo-topics">${(repo.topics || []).slice(0, 4).map(t => `<span>${escapeHTML(t)}</span>`).join('')}</div>
+        <span class="repo-link">Access Repo <i class="fa-solid fa-arrow-right"></i></span>
+      `;
+      grid.appendChild(card);
+      attachTilt(card);
+    });
+
+    // Fade + slide in the freshly rendered cards (guarded if GSAP absent)
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray('.repo-card').forEach((card) => {
+        gsap.fromTo(card,
+          { y: 50, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' }
+          }
+        );
+      });
+    }
+  } catch (err) {
+    grid.innerHTML =
+      `<div class="repo-fallback">> Uplink to GitHub failed (rate limit or offline).<br/>
+       Browse all repositories at
+       <a href="https://github.com/${GITHUB_USERNAME}" target="_blank" rel="noopener noreferrer"
+          style="color: var(--accent-color);">github.com/${GITHUB_USERNAME}</a></div>`;
+    console.warn('GitHub fetch error:', err);
+  }
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&' + 'amp;')
+    .replace(/</g, '&' + 'lt;')
+    .replace(/>/g, '&' + 'gt;')
+    .replace(/"/g, '&' + 'quot;')
+    .replace(/'/g, '&' + '#39;');
+}
+
+/* ================================================================
+   4. GSAP — hero entrance + scroll reveals
+   ================================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  loadGitHubData();
+
+  if (window.gsap) {
+    // Hero entrance timeline
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.from('#hero-tag', { y: -24, opacity: 0, duration: 0.6, delay: 0.2 })
+      .from('h1 .glitch', { y: 40, opacity: 0, duration: 0.8, stagger: 0.12 }, '-=0.3')
+      .from('#hero-sub', { x: -30, opacity: 0, duration: 0.6 }, '-=0.4')
+      .from('#hero-bio', { y: 24, opacity: 0, duration: 0.7 }, '-=0.35')
+      .from('#hero-cta .btn', { y: 20, opacity: 0, duration: 0.5, stagger: 0.12 }, '-=0.35')
+      .from('#profile-card', { x: 60, opacity: 0, duration: 0.9 }, '-=0.9')
+      .from('.scroll-hint', { opacity: 0, duration: 0.8 }, '-=0.2');
+
+    // Section headers slide in on scroll
+    if (window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray('.section-head').forEach((head) => {
+        gsap.from(head, {
+          y: 40, opacity: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: head, start: 'top 85%' }
+        });
+      });
+      gsap.from('.about-panel', {
+        y: 60, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '.about-panel', start: 'top 85%' }
+      });
+      gsap.from('.social-btn', {
+        y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.social-links', start: 'top 90%' }
+      });
+    }
+  }
+});
+</script>
+</body>
+</html>
